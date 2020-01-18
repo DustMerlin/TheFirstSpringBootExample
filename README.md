@@ -118,7 +118,8 @@
     
     git branch -av
    
-    
+    git commit --amend --no-edit 追加到上次的
+    git push
 
    
 
