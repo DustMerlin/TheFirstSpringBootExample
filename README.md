@@ -1,14 +1,23 @@
 # My first spring project
 
-## src
-    https://spring.io/guides
+## 资料
+    
+[Spring文档](https://spring.io/guides)
+
+[github](https://github.com)
+
+[git文档](http://git-scm.com/download)
+
+[git_help文档](https://help.github.com/en/github/authenticating-to-github/checking-for-existing-ssh-keys)
+
+[boolstrap组件](https://v3.bootcss.com/components/#navbar-default)
+
+[github 授权登录流程](https://developer.github.com/apps/building-oauth-apps/)
     
   
-## tool
-    https://github.com   
-    http://git-scm.com/download
-    https://help.github.com/en/github/authenticating-to-github/checking-for-existing-ssh-keys
-    
+## tool 
+[Git](https://git-scm.com/download)
+[Visual Paradigm](https://www.visual-paradigm.com)    
 ## use git
 ### 创建本地仓库
 #### git的最小配置
@@ -48,6 +57,7 @@
     git add -u //git 管理的全部提交到暂存区
     git rm  文件名//删除文件
     git commit -m"提交理由（可省略）" 
+    git commit --amend --no-edit  //追加
     
     //工作目录-git add files>暂存区-git commit> 历史版本
     
@@ -75,6 +85,8 @@
     git branch -av //查看git分支
     gitk //打开图形界面
     
+    
+    dir .git 查看文件，类似于ls
 #### 探索.git 目录 
     git cat-file -t 哈希值//查看类型 commit tree blob
     git cat-file -p 哈希值//查看内容
@@ -112,28 +124,48 @@
     
     git diff commit_1 commit_2 //比较commit_1 和commit_2 的差异
     git diff HEAD HEAD~1(^1)[/HEAD~2(^^)]
+    git diff //工作区与暂存区比较
+    git diff --cached//暂存区与HEAD比较
     
     git branch -d 分支名 // 删除分支
     git branch -D 分支名 // 
     
-    git branch -av
+    git branch -av//显示所有分支
    
     git commit --amend --no-edit 追加到上次的
     git push
+    
+    git commit --amend //变更最近一次提交的commit的message
+    git rebase -i commit号//   协同不要轻易使用,选择父亲的commit号
+    
+    git rebase -i      //交互式，内部有相应的选项，变基操作
 
+    git reset HEAD//取消暂存,恢复和HEAD一样
+    git reset HEAD -- 文件名//某文件恢复和HEAD对应的文件一样
+    git checkout -- 文件名//从暂存区恢复某文件到工作区
+    
+    git reset --hard 恢复到某commit//恢复的commit，删除该commit之后的commit,暂存区，工作区同时
+    
+    git stash//暂存工作区
+    git stash list//查看stash
+    git stash apply//恢复工作区
+    
+## 备份
+    git push //推
+    git fetch //拉
+    git pull //fetch merge合并
+    git merge --allow-unrelated-histories// 允许不相干的树合并 
+    
+    
+    git clone --bare  路径//克隆裸仓库，file://路径，智能协议
+    git push --set-upstream 分支名 变更人
+    git remote -v //协议版本    remote 远端
+    git remote add github git@github.com:DustMerlin/TheFirstSpringBootExample.git
    
+    git checkout -b 本地分支 远端依赖分支//创建切换到新分支
 
     
         
-    
-    
-    
-    
-    
-    
-    
-   
-    
     
     
     
