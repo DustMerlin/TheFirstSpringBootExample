@@ -19,7 +19,7 @@ public class HelloController {
 //    }
 
 
-    @GetMapping("/hello")
+    @GetMapping("/index")
     public String hello(Model model){
         return "index";
 
