@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
+//cookie,session，持续保持为登录态
+
 @Controller
 public class AuthorizeController {
 

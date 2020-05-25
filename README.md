@@ -13,8 +13,13 @@
 [boolstrap组件](https://v3.bootcss.com/components/#navbar-default)
 
 [github 授权登录流程](https://developer.github.com/apps/building-oauth-apps/)
-    
-  
+[github 授权登录流程 doc](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/)
+[H2 database in Maven](https://mvnrepository.com/artifact/com.h2database/h2/1.4.199)
+[h2 quickstart](http://www.h2database.com/html/quickstart.html)
+[MySQL 菜鸟教程](https://www.runoob.com/mysql/mysql-tutorial.html)
+[Java 注解（Annotation)](https://www.runoob.com/w3cnote/java-annotation.html)
+
+
 ## tool 
 [Git](https://git-scm.com/download)
 [Visual Paradigm](https://www.visual-paradigm.com)    
