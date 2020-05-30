@@ -19,10 +19,21 @@
 [MySQL 菜鸟教程](https://www.runoob.com/mysql/mysql-tutorial.html)
 [Java 注解（Annotation)](https://www.runoob.com/w3cnote/java-annotation.html)
 
-
+[Spring boot mybaies](https://docs.spring.io/spring-boot/docs/2.0.0.RC1/reference/htmlsingle/#boot-features-embedded-database-support)   
 ## tool 
 [Git](https://git-scm.com/download)
-[Visual Paradigm](https://www.visual-paradigm.com)    
+[Visual Paradigm](https://www.visual-paradigm.com)   
+
+> 2020.5.30 21.51
+    一些问题，main可能会执行两边，里边的UserMapper 无法正常使用，报空指针异常，DB Browser刷新数据显示不及时
+    集成了mybaties ,连接了mysql,成功写入数据，增加了mysql pom.xml文件，测试通过！
+## IDEA 快捷键
+      //ctrl alt v 自动生成变量定义
+      //shift F6 批量修改全部选中的变量名
+      //shift enter 从任意位直接换到下一行
+      //alt insert 快速生成
+      
+
 ## use git
 ### 创建本地仓库
 #### git的最小配置
