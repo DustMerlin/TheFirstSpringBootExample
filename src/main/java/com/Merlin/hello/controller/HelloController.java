@@ -1,5 +1,8 @@
 package com.Merlin.hello.controller;
 
+import com.Merlin.hello.mapper.UserMapper;
+import com.Merlin.hello.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +20,25 @@ public class HelloController {
 //        return "index";
 //
 //    }
-
+    @Autowired
+    private UserMapper userMapper;
 
     @GetMapping("/index")
     public String hello(Model model){
+        //ctrl alt v 自动生成变量定义
+        //shift F6 批量修改全部选中的变量名
+        //shift enter 从任意位直接换到下一行
+        System.out.println("hello");
+        userMapper.insert(new User("95005",20,"SC","SM",'F'));
+
+        System.out.println("helloSuccess");
+        User user = new User();
+        user.setSno("95007");
+        user.setAname("SL");
+        user.setSsex('F');
+        user.setSage(20);
+        user.setAdept("SC");
+        userMapper.insert(user);
         return "index";
 
     }
