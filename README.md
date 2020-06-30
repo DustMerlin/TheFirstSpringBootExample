@@ -229,7 +229,7 @@
     git config --system //
     
     git config --local --list//
-    git config --gloabl --list//
+    git config --global --list//
     git config --system --list//
     
     pwd
