@@ -30,7 +30,134 @@
 [Git](https://git-scm.com/download)
 
 [Visual Paradigm](https://www.visual-paradigm.com) 
-  
+
+
+# 2020.7.12 日所学内容
+
+> 启动类，@Controller，注册整合Servlet
+
+## 创建启动类
+> src>java>包名>根目录下创建启动类
+    
+    @SpringBootApplication
+    public class HelloApplication {
+    
+    	@Autowired
+    	private static UserMapper userMapper;
+    
+    
+    	public static void main(String[] args) {
+    //		System.out.println("main");
+    //		启动类中可能或者不能包含一些其他的内容，仅为启动内容？
+    		SpringApplication.run(HelloApplication.class, args);
+    	}
+    
+    }
+
+> 创建controller
+    
+    @Controller 
+
+    @RestController = @controller + @ResponseBody 所有页面不做任何跳转，只返回json格式的字符串
+        @ResponseBody 以json格式的字符串为返回数据，
+        
+    官方文档：
+    @RestController is a stereotype annotation that combines @ResponseBody and @Controller.
+    意思是：
+    @RestController注解相当于@ResponseBody ＋ @Controller合在一起的作用。
+    1)如果只是使用@RestController注解Controller，则Controller中的方法无法返回jsp页面，
+        配置的视图解析器InternalResourceViewResolver不起作用，返回的内容就是Return 里的内容。
+        例如：本来应该到success.jsp页面的，则其显示success.
+    2)如果需要返回到指定页面，则需要用 @Controller配合视图解析器InternalResourceViewResolver才行。
+    3)如果需要返回JSON，XML或自定义mediaType内容到页面，则需要在对应的方法上加上@ResponseBody注解。
+
+    ```java
+    package com.Merlin.hello.controller;
+    
+    import org.springframework.web.bind.annotation.RequestMapping;
+    import org.springframework.web.bind.annotation.RestController;
+    
+    //处理请求的Controller
+    @RestController
+    public class RequestController {
+    
+        @RequestMapping("/helloworld")
+        public String showHelloWorld(){
+            return "HelloWOrld!";
+        }
+    }
+    ```
+    
+> controller得常用注解
+    
+    @RestController = @Controller + @ResponseBody 
+        所有页面不做任何跳转（不返回页面，也无法传输数据到另一个页面），
+        相当于在@Controller上加了@ResponseBody注解，
+        所以InternalResource ViewResolver不起作用，
+        只返回json格式的字符串（即return 中的内容）
+        
+        @ResponseBody 只返回json格式字符串数据
+        
+    @GetMapping 
+        该注解是@RequestMapping(method=RequestMethod.Get)的缩写
+        仅处理Get请求
+        以下同理
+        
+    @PostMapping 
+        该注解是@RequestMapping(method=RequestMethod.Post)的缩写    
+        
+    @PutMapping 
+        该注解是@RequestMapping(method=RequestMethod.Put)的缩写
+    
+    @DeleteMapping 
+        该注解是@RequestMapping(method=RequestMethod.Delete)的缩写
+        
+        
+> Spring Boot整合Web层的技术
+    
+    整合Servlet方式一：通过注解扫描完成Servlet组件的注册（推荐使用）
+
+    创建Servlet
+    //urlPatterns = "/first"  此处的地址则为访问地址
+    @WebServlet(name = "FirstServlet",urlPatterns = "/first")
+    public class FirstServlet extends HttpServlet {
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+            System.out.println("First Servet······");
+        }
+    }
+    必要!!!在启动类中添加如下注解
+    @ServletComponentScan //在spring boot 启东时会扫描@WebServlet注解，并将该类实例化
+    如果不添加该注解，则无法访问
+    
+    
+    
+    
+    整合Servlet方式二：通过方法完成Servlet组件的注册
+    
+    //该注册方法也可以放置在启动类中，就不需要单独写了，17 Spring Boot整合Servlet方法二
+    @Configuration
+    public class ServletConfig {
+        /*
+                完成Servlet组件的注册
+        */
+        @Bean  //相当于xml中Bean标签,ServletRegistrationBean必须返回这个对象
+        public ServletRegistrationBean getServletRegistrationBean(){
+            //注册Servlet，实例化
+            ServletRegistrationBean bean = new ServletRegistrationBean(new SecondServlet());
+            //添加URL访问路径
+            bean.addUrlMappings("/seconde");
+            return bean;
+        }
+    }
+    
+
+    
+
+# 很久之前的内容
+
+> 以下为上一次的内容，每次添加的内容写在最前边，方便查看，提交前在今日内容前写个简短的说明
+ 
 ## IDEA 快捷键
       //ctrl alt v 自动生成变量定义
       //shift F6 批量修改全部选中的变量名
