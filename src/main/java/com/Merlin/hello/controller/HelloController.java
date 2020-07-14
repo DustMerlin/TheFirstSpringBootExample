@@ -29,17 +29,17 @@ public class HelloController {
         //shift F6 批量修改全部选中的变量名
         //shift enter 从任意位直接换到下一行
         System.out.println("hello");
-        userMapper.insert(new User("95005",20,"SC","SM",'F'));
-
-        System.out.println("helloSuccess");
-        User user = new User();
-        user.setSno("95007");
-        user.setAname("SL");
-        user.setSsex('F');
-        user.setSage(20);
-        user.setAdept("SC");
-        userMapper.insert(user);
-        return "index";
+//        userMapper.insert(new User("95005",20,"SC","SM",'F'));
+//
+//        System.out.println("helloSuccess");
+//        User user = new User();
+//        user.setSno("95007");
+//        user.setAname("SL");
+//        user.setSsex('F');
+//        user.setSage(20);
+//        user.setAdept("SC");
+//        userMapper.insert(user);
+        return "index.html";
 
     }
 

@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication
-@ServletComponentScan //在spring boot 启东时会扫描@WebServlet注解，并将该类实例化
+@ServletComponentScan //在spring boot 启东时会扫描@WebServlet,@WebFilter,@WebListener注解，并将该类实例化
 public class HelloApplication {
 
 	@Autowired

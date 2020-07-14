@@ -1,5 +1,66 @@
 # My first spring project
 
+## MySQL 问题
+    时区 set global time_zone = '+8:00';
+    
+    
+    properties参数设置
+    连接  serverTimezone=UTC
+    字符  characterEncoding=utf8
+          useUnicode=true
+        
+        
+          
+     password expire:用来设置用户口令过期，失效，强制用户登录数据库时候必须修改口令.
+     
+     create user zhou7–用户名 
+     identified by zhou7777–口令 
+     default tablespace users–默认表空间 
+     temporary tablespace temp–临时表空间 
+     password expire;
+     ————————————————
+     版权声明：本文为CSDN博主「单身贵族男」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+     原文链接：https://blog.csdn.net/zhou920786312/java/article/details/72770645
+    
+> 使用ALTER USER命令修改用户的密码、密码过期，锁定，解锁          
+          
+    使用ALTER USER命令可以用来修改用户的口令,设置口令过期,锁定以及解锁用户等等。
+    1、修改用户的口令，将用户的口令修改为新的密码
+    ALTER USER SCOTT IDENTIFIED BY NEWPASSWORD;
+    
+    
+    
+    SQL> ALTER USER SCOTT IDENTIFIED BY SOCTT;
+    用户已更改。
+    
+    2、设置用户口令过期，通过设置用户过期，这样该用户在下次登录的时候就必须要修改密码。
+    ALTER USER SCOTT PASSWORD EXPIRE;
+    
+    SQL> ALTER USER SCOTT PASSWORD EXPIRE;
+    用户已更改。
+    
+    
+    3、锁定用户，将用户锁定之后，被锁定的用户是不能够再次登录到系统中。
+    ALTER USER SCOTT ACCOUNT LOCK;
+    
+    
+    
+    SQL> ALTER USER SCOTT ACCOUNT LOCK;
+    用户已更改。
+    
+    
+    
+    
+    4、解锁用户，解锁用户的锁定状态。
+    ALTER USER SCOTT ACCOUNT UNLOCK;
+    
+    
+    
+    SQL> ALTER USER SCOTT ACCOUNT UNLOCK;
+    ————————————————
+    版权声明：本文为CSDN博主「陈字文」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+    原文链接：https://blog.csdn.net/ziwen00/java/article/details/8460754
+
 ## 资料
     
 [Spring文档](https://spring.io/guides)
@@ -31,7 +92,269 @@
 
 [Visual Paradigm](https://www.visual-paradigm.com) 
 
+# 2020.7.14 日所学内容
 
+> filter,listener,SpringBoot 访问静态资源,文件上传，配置上传容量
+
+## filter
+> 整合方式一：使用注解整合@WebFilter，@ServletComponentScan
+
+    //@WebFilter(filterName = "firstFilter",urlPatterns = {"*.do","*.jsp"})
+    @WebFilter(filterName = "firstFilter",urlPatterns = "/first")
+    public class FirstFilter implements Filter{
+    
+        @Override
+        public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+            System.out.println("enter the first filter");
+            filterChain.doFilter(servletRequest,servletResponse);
+            System.out.println("left the first filter");
+        }
+    }
+    
+    filter 数据 servlet 的一个子技术，在启动类中有下方的注解
+        @ServletComponentScan //在spring boot 启东时会扫描@WebServlet注解，并将该类实例化
+        时可以处理filter
+        
+        
+> 整合方式二：使用组件注册的方式
+
+    /*
+        整合方式二：使用组件注册的方式
+     */
+    
+    public class SecondFilter implements Filter {
+    
+    
+        @Override
+        public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+            System.out.println("enter the second filter");
+            filterChain.doFilter(servletRequest,servletResponse);
+            System.out.println("left the second filter");
+        }
+    }
+    
+    @Configuration
+    public class FilterConfig {
+    
+        @Bean
+        public FilterRegistrationBean getFilterRegistrationBean(){
+            FilterRegistrationBean bean = new FilterRegistrationBean(new SecondFilter());
+    //        bean.addUrlPatterns(new String[]{"*.jsp","*.do"});
+    //        下方的url一定不要忘记加/
+            bean.addUrlPatterns("/second");
+            return bean;
+        }
+    }
+
+
+## listener
+
+> 整合方法一：注解@ServletComponentScan 
+             //在spring boot 启东时会扫描@WebServlet,@WebFilter,@WebListener注解，并将该类实例化
+
+    /*
+        整合listener：注解@ServletComponentScan
+        
+     */
+    @WebListener
+    public class FirstListener implements ServletContextListener {
+        @Override
+        public void contextInitialized(ServletContextEvent sce) {
+            System.out.println("Listener···Init···");
+        }
+    
+        @Override
+        public void contextDestroyed(ServletContextEvent sce) {
+            System.out.println("Listener···Destory···");
+        }
+    } 
+    
+> 整合方法二：组件注册
+    
+    /*
+        整合listener：组件注册方式
+     */
+    public class SecondListener implements ServletContextListener{
+    
+            @Override
+            public void contextInitialized(ServletContextEvent sce) {
+                System.out.println("ListenerSecond···Init···");
+            }
+    
+            @Override
+            public void contextDestroyed(ServletContextEvent sce) {
+                System.out.println("ListenerSecond···Destory···");
+            }
+    }
+    
+    
+    //注册类必须带有该注解@Configuration
+    @Configuration
+    public class ListenerConfig {
+        //慎重使用自动补全的功能，很大程度会出现和函数重名或者不易察觉的不是自己预想中的名字
+        //一定要谨慎，不然该错误很难排查，
+        //如果重名了不可重载的函数或者重载了可重载的函数，都可能造成无法想象的错误
+        @Bean
+        public ServletListenerRegistrationBean getServletRegistrationBean(){
+            ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean(new SecondListener());
+    
+            return bean;
+        }
+    }
+    
+    
+## SpringBoot 访问静态资源
+
+> src>resourses>static|templates
+
+    static 目录存放静态页面，图片资源，静态资源必须存放在static目录下,可直接访问页面和内容
+    templates 中只能存放Thymeleaf动态页面，不推荐使用jsp视图技术，默认使用Thymeleaf来做动态页面
+            且需要Controller做跳转才可访问该文件下的页面！！！！
+    
+    
+    在static 创建sb.html,http://localhost:8899/sb.html可直接访问
+    也可在Controller中写明跳转地址，和访问什么跳转
+    
+    
+
+> 此处可能直接定位到templates 文件夹，所以需要相对路径找到对应的static 切记！！！
+
+> 而且return 时一定要带上后缀名，不然也无法跳转（可能是因为没有视图层解析的缘故） 切记！！！
+    @Controller
+    public class PageController {
+    
+        //GetMapping和RequestMapping  有什么区别
+        @RequestMapping("/page")
+        public String showPage(){
+            System.out.println("this is sb");
+            //此处可能直接定位到templates 文件夹，所以需要相对路径找到对应的static 切记！！！
+            return "../static/sb.html";
+        }
+    }
+    
+    
+> @GetMapping 和 @RequestMapping  注解的探索
+    
+    @GetMapping
+    用于将HTTP GET请求映射到特定处理程序方法的注释。具体来说，@GetMapping是一个作为快捷方式的组合注释
+    @RequestMapping(method = RequestMethod.GET)。
+    
+    @PostMapping
+    用于将HTTP POST请求映射到特定处理程序方法的注释。具体来说，
+    @PostMapping是一个作为快捷方式的组合注释@RequestMapping(method = RequestMethod.POST)。
+    
+    @RequestMapping:
+    一般情况下都是用@RequestMapping（method=RequestMethod.），因为@RequestMapping可以直接替代以上两个注解，
+    但是以上两个注解并不能替代@RequestMapping，@RequestMapping相当于以上两个注解的父类！
+    
+    类似的组合注解还有：
+    @PutMapping、@DeleteMapping、@PatchMapping
+    总结下来就是@PostMapping和@GetMapping都可以用@RequestMapping代替，
+    如果读者怕在映射的时候出错，可以统一写@RequestMapping，当然这样写的话也有弊端，
+    笼统的全用@RequestMapping, 不便于其他人对代码的阅读和理解！还是建议区分开来写！养成良好的代码习惯！
+    ————————————————
+    版权声明：本文为CSDN博主「private_static」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+    原文链接：https://blog.csdn.net/qq_41973208/java/article/details/85008962
+    
+    
+## springboot 其他可存放静态资源地址
+
+> 以下位置均可存放（未测试）,以下为默认访问及其顺序
+
+    src/main/java/resources/META-INF/resources/
+    src/main/java/resources/resourses/
+    src/main/java/resources/static/
+    src/main/java/resources/public/
+
+> springboot 自定义目录访问
+
+    在配置文件中，使用spring.rescources.static-locations=classpath:/suibian/
+    这里修改了配置，则默认值则没有了，如果需要，
+    则需要添加classpath:/suibian/,classpath:/static/  使用逗号分隔
+    suibian/此目录为在src/main/java/resources/下创建的
+    
+    
+## springboot 文件上传
+
+> HTML   重点！！！！！！！！！！！！！
+
+    action 为要访问的controller，可以没有"/",直接给出对应controller 中
+    @PostMapping("/fileUploadController")中的名字，这里必须要有"/",
+    method 为访问的方式，文件上传必须要有enctype="multipart/form-data"
+     <input type="file" name="file"/> 这里的imput name必须和
+     public String fileUpload(MultipartFile file)参数的名字一致！！！ ！！！
+    <form action="fileUploadController" method="post" enctype="multipart/form-data">
+            <input type="file" name="file"/>
+            <input type="submit" value="submit" />
+    </form>  
+
+> java fileUploadController  
+    
+    这里可能spring boot直接包含了spring mvc 所以不需要去pom.xml文件中添加MVC的依赖文件
+    //仅仅返回字符串，不返回网页,如果返回网页，使用@Controller，
+        并且return 字符串必须为带后缀名的页面（templates中或者static中的）
+    @RestController
+    
+    public class FileUploadController {
+        //使用post 请求，所以使用@PostMapping("/fileUploadController")
+            这里和HTML中的action一致，注意要有"/",action中可以没有
+        @PostMapping("/fileUploadController")
+        
+        //此处的MultipartFile file变量名，必须和form表单中提交文件的name相同一致
+            <input type="file" name="file"/> 这里的imput name必须和
+            public String fileUpload(MultipartFile file)参数的名字一致！！！ ！！！     
+        public String fileUpload(MultipartFile file) throws IOException {
+            //获取真实文件的地址,getURL("src/main/resources/static/img"),参数最好为文件中的全路径，不然可能无法访问
+            //在springboot 中 可能只有这一种方法管用 ResourceUtils.getURL("src/main/resources/static/img").getPath();
+            //其余的getRealPath方法可能是容器运行地址，c/appdata/tomcat··· ，可能为这种样子的地址
+            String basePath = ResourceUtils.getURL("src/main/resources/static/img").getPath();
+            System.out.println(basePath);
+            //E:/sources/Java_idea/hello/src/main/resources/static/img/
+            //此处的路径最后是有"/",所以在文件创建前不用再添加
+            //transferTo在页面中只能执行一次，如需多次上传不用位置，可以copy，再操作
+            file.transferTo(new File(basePath+file.getOriginalFilename()));
+            //@RestController 才能返回字符串
+            return "OK";
+        }
+    }
+> 修改文件上传的大小
+
+    默认单个文件上传的大小为 1MB
+    spring.servlet.multipart.max-file-size=2MB  去配置文件中这是传输文件大小
+    默认一次请求中文件上传的总大小为 10MB
+    spring.servlet.multipart.max-request-size=10MB（默认），文件的总大小
+    
+    
+> 关于路径获取的详细回答
+
+    以前spring mvc项目由于使用的是外部容器跑项目，所以使用request.getRealPath("./")方法是可以获取到静态资源路径的。
+    但是spring boot获取的是内部容器的地址，如C:\Users\cjj\AppData\Local\Temp\tomcat-docbase.2424851108757135007.8088\
+    
+    我们无法使用request.getRealPath("./")获取静态页面资源。
+    但是可以使用ResourceUtils.getFile方法，这样就可以读取模板文件
+    ————————————————
+    版权声明：本文为CSDN博主「canon_in_csdn」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+    原文链接：https://blog.csdn.net/canon_in_csdn/java/article/details/86685739
+
+> java File 类型 转换成 MultipartFile(尚未测试)
+
+    File file = new File("src/test/resources/input.txt");
+    FileInputStream input = new FileInputStream(file);
+    MultipartFile multipartFile = new MockMultipartFile("file",
+    file.getName(), "text/plain", IOUtils.toByteArray(input));
+    
+    从国外网站上搜到的，IOUtils.toByteArray(input)不识别时，可直接使用上面  FileInputStream 类型的input做第四个参数也是可以的。
+    亲测有效！
+    
+> 文件同时上传到两个路径下保存，使用了MultipartFile的transferTo()方法两次，第二次就报错了，应该怎么去解决
+    
+    未测试
+    
+    因为http post文件流只可以接收读取一次，传输完毕则关闭流。
+    可以把流保存为文件1，然后对文件1进行复制，移动等操作。
+    
+    
+    
 # 2020.7.12 日所学内容
 
 > 启动类，@Controller，注册整合Servlet
@@ -497,3 +820,53 @@
     
     生成SSH公钥和秘钥，方便通过git提交到github的仓库中
     
+## javaBean规范(此项目中可能用不到？)
+    如果我们想在JSP页面中使用标签来操作java类，那么我们所写的java类就必须遵守JavaBean规范，
+    一个JavaBean，是由其属性和方法组成的。
+    
+     
+    
+    1. JavaBean 类必须是一个公共类，即使用关键字 public 声明类。
+    
+     
+    
+    2. JavaBean 类中必须有一个声明为公共的无参构造函数。
+    
+    　　JavaBean 本质还是一个java类，在不声明任何构造器的情况下，系统会给它添加一个默认的无参构造器；
+    
+    　　如果手动声明了一个构造器，则系统不会添加默认的无参构造器，这时如果不手动添加无参构造器，
+        当创建无参对象时，就会报错，因为找不到无参构造器。
+    
+     
+    
+    3. JavaBean 类中的实例变量必须为私有的，即所有的实例变量都使用关键字 private 声明。
+    
+     
+    
+    4. 必须为 JavaBean 类中的实例变量提供公共的 getter / setter 方法。
+    
+    　　只提供 getter 方法的属性，称为只读属性；只提供 setter 方法的属性，称为只写属性。
+    
+    　　使用 private 修饰实例变量，可以保证数据安全，其他类无法直接访问这些变量。
+        在 getter / setter 方法中，可以做一些权限控制，数据校验等工作，以保证数据的安全，合法性。
+    
+     
+    
+    5. JavaBean 类中实例属性的命名规则： 实例属性名前两个字母要么都小写，要么都大写。
+    
+    　　（1） 属性名前两个字母都小写：将属性名的首字母大写，然后用作 getter / setter 方法中 
+            get / set 的后部分，如属性名为 name, 它的 getter / setter 方法为 getName / setName。
+    
+    　　（2） 属性名的第二个字母大写： 将属性名直接用作 getter / setter 方法中 get / set 的后部分，
+            即属性名大小写不变。如属性名为 uName，它的 getter / setter 方法为 getuName / setuName。
+    
+    　　（3） 属性名前两个字母都大写：将属性名直接用作 getter / setter 方法中 get / set 的后部分，
+            即属性名大小写不变。如属性名为 IDcode， 它的 getter / setter 方法为 getIDcode / setIDcode。
+    
+    　　（4） 属性名首字母大写：将属性名直接用作 getter / setter 方法中 get / set 的后部分，
+            即属性名大小写不变。如属性名为 Ucode， 它的 getter / setter 方法为 getUcode / setUcode。
+            但是这种情况，在应用中会出现找不到属性的错误。
+            
+## 数据库连接池
+
+[数据库连接池](http://www.jianshu.com/p/ad0ff2961597)

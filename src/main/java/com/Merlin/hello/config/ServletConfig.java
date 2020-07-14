@@ -18,7 +18,7 @@ public class ServletConfig {
     public ServletRegistrationBean getServletRegistrationBean(){
         //注册Servlet，实例化
         ServletRegistrationBean bean = new ServletRegistrationBean(new SecondServlet());
-        //添加URL访问路径
+        //添加URL访问路径,访问路径一定要有/
         bean.addUrlMappings("/second");
         return bean;
     }
