@@ -93,6 +93,27 @@
 <!--		</dependency>-->
 
 
+<!--		<dependency>-->
+<!--			<groupId>org.apache.tomcat.embed</groupId>-->
+<!--			<artifactId>tomcat-embed-jasper</artifactId>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>javax.servlet</groupId>-->
+<!--			<artifactId>jstl</artifactId>-->
+<!--		</dependency>-->
+
+
+		<!--Freemarker 启动器依赖，视图层类似于thymeleaf-->
+		<!--导入不了原因未知-->
+<!--		 https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-freemarker -->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-freemarker</artifactId>-->
+<!--		</dependency>-->
+
+
+
 
 	</dependencies>
 

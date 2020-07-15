@@ -87,10 +87,421 @@
 
 [Spring boot mybaies](https://docs.spring.io/spring-boot/docs/2.0.0.RC1/reference/htmlsingle/#boot-features-embedded-database-support)   
 
+[thymeleaf](https://www.thymeleaf.org/)
+
+
 ## tool 
 [Git](https://git-scm.com/download)
 
 [Visual Paradigm](https://www.visual-paradigm.com) 
+
+
+
+
+# 2020.7.15 日所学内容
+> 整合Servlet（不推荐），Thymeleaf的使用（重点）
+
+## 整合Servlet
+> 1.修改POM.xml文件，添加JSP引擎和JSTL标签库
+
+    spring boot 内置的tomcat中没有JSP依赖,需要引入JSP引擎依赖
+    
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+		
+	添加JSTL坐标依赖
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>	
+        
+
+> 2.创建webapp目录
+
+    webapp目录需要创建在main的根目录下，存放JSP,main/webapp/*.jsp
+    main/webapp/WEB-INF  存放一些其他内容，不允许直接访问
+> 3.标记为web目录
+    
+    在IDEA正版的Project Structure中设置即可
+    
+> 4.创建JSP
+
+    #JSP配置视图解析器，spring boot默认为thymeleaf页面
+    #页面默认前缀目录
+    spring.mvc.view.prefix=/WEB-INF/jsp/
+    #页面默认后缀目录
+    spring.mvc.view.suffix=.jsp
+    #这个是关闭thymeleaf缓存
+    spring.thymeleaf.cache=false　　　　
+    #关闭thymeleaf模板
+    spring.thymeleaf.enabled = false　
+    
+> 如果想上方这样设置，就不能正常访问rescources里的内容，而只能访问定义在/WEB-INF/jsp/里的内容
+
+    web.xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+             version="4.0">
+    </web-app>
+
+
+    /*
+        JSP页面跳转Controller
+     */
+    
+    //页面跳转，需要视图解析器
+    @Controller
+    public class JspPageController {
+    //    页面跳转
+    
+        @GetMapping("/{page}")
+        public String showPage(@PathVariable String page){
+            return page;
+        }
+    }
+
+> 如果在IDEA中，项目结构为聚合工程，那么在运行jsp是需要指定项目路径的
+    （sourses->java-idea->hello（本项目））这个地址，在运行按钮旁边的选中中，找到启动类，即可选择
+
+    本项目可能不需要设置，因为不为聚合项目
+    值得注意的是，在配置文件中的设置，导致rescoueces中的文件不能访问，只能访问当前jsp目录
+    如果需要更改，记得要注释掉jsp整合时的文件
+
+
+> 在IDEA中配置spring boot 对jsp页面的支持
+    
+    （1）pom增加依赖：
+    
+    <!--springboot tomcat jsp 支持开启-->
+    <dependency>
+           <groupId>org.apache.tomcat.embed</groupId>
+           <artifactId>tomcat-embed-jasper</artifactId>
+    </dependency>
+    
+    <dependency>
+           <groupId>javax.servlet</groupId>
+           <artifactId>jstl</artifactId>
+           <scope>compile</scope>  //这块需要吗？大多数地方看到都是不需要的
+    </dependency>
+    
+    （2）配置jsp的放置位置
+    
+    a.如果用的是yml配置，如下配置：
+    
+    spring:
+        mvc:
+           view:  
+               prefix: /WEB-INF/jsp/ 
+               suffix: .jsp
+    
+    b.如果用的是properties配置，如下配置：
+    spring.mvc.view.prefix=/WEB-INF/jsp/
+    spring.mvc.view.suffix=.jsp 
+    spring.thymeleaf.cache=false　　　　//这个是关闭thymeleaf缓存
+    spring.thymeleaf.enabled = false　 //关闭thymeleaf模板
+    （3）springboot 利用工具搭建时，是没有webAPP等目录的，需要手动创建以下目录：
+    （4）如上，已经是完成了。第四步，写个controller访问。注意别加注解@ResponeBody 或者@RestController
+
+    @Controller
+    public class IndexController {
+        @RequestMapping("/index")
+         public String index(){ 
+          return "index";
+          }
+     }
+
+    
+    补充说明：由于本次配置使用的开发工具是IDEA，而该开发工具默认没有开启创建jsp页面的功能，所以需要使用者手动配置一下。配置步骤整理如下：
+    左上角，file中点击project Structure项，在Modules选项卡中，找到本项目，在本项目下添加web。
+
+    然后你会发现在创建的时候，可以直接创建JSP模版了
+
+
+## spring boot 整合 Freemarker   （模板视图和thymeleaf类似） 
+    
+    <!--导入不了原因未知-->
+    
+## thymeleaf 
+[thymeleaf](https://www.thymeleaf.org/)
+    
+    thymeleaf一个用于Web和独立环境的现代服务器端Java模板引擎。
+    
+    Thymeleaf的主要目标是带来优雅自然模板对于您的开发工作流程，
+    -HTML可以在浏览器中正确显示，也可以作为静态原型工作，允许在开发团队中进行更强的协作。
+    
+    thymeleaf可以处理html,xml.js,css,甚至纯文本
+    
+    有了Spring框架的模块、与您最喜欢的工具的大量集成以及插入您自己的功能的能力，
+    Thymeleaf是现代HTML 5 JVM Web开发的理想选择，尽管它可以做更多的事情。
+
+> thymeleaf是原生的，不依赖于标签库，可以接受为html模板进行编辑和数据渲染，
+           thymeleaf和servlet没有规范耦合，所以可以涉及jsp无法涉及的领域
+
+    Thymeleaf为模板引擎，为html模板实现数据渲染，单体项目中需要视图层的较为适用
+    
+    前后端分离的项目，后端只需返回数据接口即可，对视图层的要求不高，
+        Thymeleaf作用区别不大，在这种情况下
+
+> Thymeleaf 导入启动器，使用标记进行数据渲染
+
+    Thymeleaf启动器依赖添加
+    
+    <dependency>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+
+    //！！！！！！如果在配置文件中，修改过默认配置为jsp文件件，一定要注释掉，切记！！！！！！
+    
+    templates 文件夹中的内容，不允许直接访问，只能使用Controller来跳转
+    /*
+       ThymeleafPageController
+     */
+    @Controller
+    public class ThymeleafPageController {
+    
+        @GetMapping
+        public String showPage(Model model){
+            //此处的函数名一定不要打错了！！！ ！！！
+            model.addAttribute("msg","Hello ThymeleafPageController");
+            return "index";
+        }
+    }
+    
+    在html页面中，使用el表达式，将数据填入到页面当中
+    <span th:text="${msg}"></span></br>
+
+
+> Thymeleaf中页面的类el表达式，但是使用的限制较多——仅限于标签内，使用th:~~,其他格式都不能渲染相应的数据
+
+    在html标签中该有以下的 命名空间xmlns:th="http://www.thymeleaf.org"
+    <html xmlns:th="http://www.thymeleaf.org">
+    
+    th:text 在页面中输出值(渲染数据),标签内的值会替换一对标签之间的值
+    <span th:text="${msg}">啊啊啊</span></br>    这里只显示${msg}的内容！！！
+        
+    
+    th:value 可以将一个值放入到input标签的value中，且仅能使用th:value才能渲染数据
+    <input th:value="${msg}">
+
+> Thymeleaf 提供一些内置对象，课直接在模板中使用，这些对象是以#引用的
+
+    使用内置对象的语法
+    
+    引用内置对象使用“#”
+    大部分内置对象名称都以s结尾，如：strings字符串,numbers数字,dates日期
+ 
+> strings   ${#strings.~(key)}
+   
+    ${#strings.isEmpty(key)} 返回key所对应的value是否为空，返回true或false
+    
+    ${#strings.contains(msg,'T')} 判断字符串中是否含有字符'T'
+    
+    ${#strings.startWith(msg,'T')} 是否以某子串开头，是返回true，否则返回false
+    
+    ${#strings.endWith(msg,'T')} 是否以某子串结尾，是返回true，否则返回false
+    
+    ${#strings.length(msg)} 返回字符串的长度
+    
+    ${#strings.substring(msg,2)} 从字符串2的位置截取到末尾
+    
+    ${#strings.substring(msg,2，5)} 从字符串2的位置截取到字符串5的位置
+    
+    ${#strings.toUpperCase(msg)} 转换为大写
+    
+    ${#strings.toLowerCase(msg)} 转换为小写
+     
+    
+> dates  ${dates.~(key)}
+
+    ${dates.format(key)}  日期数据格式化为浏览器默认语言格式
+    ${dates.format(ket,'yyyy/mm/dd')}  以某种指定格式格式化日期数据
+    ${dates.year(ket)}
+    ${dates.month(ket)}
+    ${dates.day(ket)}
+    其余自行测试
+    
+> th:if 条件判断 
+    
+    example：
+    <span th:if="${sex} == 'M'">男</span>
+    <span th:if="${sex} == 'F'">女</span>
+    
+    
+> th:switch/th:case  匹配显示内容，如果有多个内容匹配，则只显示第一个
+> th:case="*" 则意为default 
+
+    <div th:switch="${id}">
+        <span th:case="1">id=1</span>
+        <span th:case="2">id=2</span>
+        <span th:case="3">id=3</span>
+        <span th:case="*">id=default</span>
+    </div>
+
+> 在thymeleaf中所有数据都是使用字符串比较
+
+> th:each="迭代器:迭代集合" 迭代器，用于循环遍历   th:text="${迭代器.属性名}" 可以去出相应的内容
+    
+    
+    <table border="1" width="50%">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+        </tr>
+
+
+        <tr th:each="t : ${list}">
+            <th th:text="${t.id}"></th>
+            <th th:text="${t.name}"></th>
+            <th th:text="${t.age}"></th>
+         </tr>
+    </table>
+
+> 迭代的状态变量 th:each="迭代器,迭代器状态对象:迭代集合"
+
+        index:当前迭代器的索引从0开始
+        count:当前迭代器的技术从1开始
+        size:别迭代对象的长度
+        odd/even:布尔值，当前循环是否是偶数/奇数 从0开始
+        first:布尔值，当前循环是否是第一条，如果是返回true
+        last:布尔值，当前循环是否是最后一条，如果是返回true
+        
+        <th th:text="${迭代器状态变量获取对象.上述属性}"></th>
+    
+> th:each="m:map" 迭代map ,迭代出来的m为对象的地址，使用.取到想要的内容
+   
+    th:text="${m.key} : ${m.value.id} : ${m.value.name}: ${m.value.age}"
+    
+> 操作域对象
+
+   注入request对象 HttpServletRequest request
+   
+       @GetMapping("/index")
+       public String hello(Model model,HttpServletRequest request){
+       //request
+           request.setAttribute("req","req");
+       //session
+           request.getSession.setAttribute("reqs","reqs");
+       //context
+           request.getSession().getServletCOntext().setAttribute("reqsc","reqsc");
+           
+           return "index.html";
+       }
+       
+       
+> 注意request均为#，session和context可以有两种方式，记得仔细辨别，加以区分
+
+   HttpServletRequest req
+   
+        th:text="${#request.getAttribute('req')}"
+        th:text="${#httpServletRequest.getAttribute('req')}"
+
+
+   HttpSession reqs
+    
+        th:text="${session.reqs}"
+        th:text="${#httpSession.getAttribute('reqs')}"
+
+
+   HttpContext reqsc
+
+        th:text="${application.reqsc}"
+        th:text="${#servletContext.getAttribute('reqsc')}"
+
+
+> URL 表达式  @{}  
+
+    绝对路径，要带有协议
+    th:href="@{http://www.baidu.com}"
+    
+    > 超链接controller使用GetMapping("/show")
+    > 需要进行测试，此处暂无
+   
+    相对路径
+        相对于当前项目的根目录
+        th:href="@{/show}"
+    
+        相对于服务器路径的根目录
+        th:href="@{~/访问项目的名称/项目名称下的资源}"
+
+--- 
+
+> URL中参数传递
+
+    > 超链接controller使用GetMapping("/show")
+    
+    在普通格式的URL中传递参数
+    @GetMapping("/show")
+    public String show(String id,String name){
+        System.out.println(id+":"+name);
+        return "index";
+    }
+    
+    //常规方式？ & 连接
+    th:href="@{/show？id=1&name=merlin}"
+    //最后的单引号该放在哪？？？？？？？
+    th:href="@{'/show？id=' + ${id} + ’&name=merlin‘}"
+     th:href="@{'/show？id=' + ${id} + '&name='+${name} }"
+    //() ,使用逗号分隔
+    th:href="@{/show(id=1,name=merlin)}"
+    th:href="@{/show(id=${id},name=merlin)}"
+    th:href="@{/show(id=1,name=${name})}"
+    th:href="@{/show(id=${id},name=${name})}"
+    
+    
+    
+    
+    restful 格式的URL中传递参数
+    
+    th:href="@{/show/{id}(id=1)}"
+    @GetMapping("/show/{id}")
+        public String show(@PathVariable String id){
+            System.out.println(id+":"+name);
+            return "index";
+        }
+        
+    th:href="@{/show/{id}/{name}(id=1,name=merlin)}"
+    @GetMapping("/show/{id}/{name}")
+        public String show(@PathVariable String id,@PathVariable String name){
+            System.out.println(id+":"+name);
+            return "index";
+        }
+        
+        
+    //混合使用，id使用restful格式传递，name用常规方式传递
+    //在括号中传递的，就可以直接使用el表达式来取值，在常规的地址中只能使用字符串拼接方式
+    th:href="@{/show/{id}(id=1,name=merlin)}"
+    th:href="@{/show/{id}(id=${id},name=merlin)}"
+    th:href="@{/show/{id}(id=${id},name=${name})}"
+    
+    th:href="@{/show/{id}/{name}(id=1,name=merlin)}"
+    th:href="@{/show/{id}/{name}(id=${id},name=merlin)}"
+    th:href="@{/show/{id}/{name}(id=${id},name=${name})}"
+    
+    
+> tymeleaf 配置文件
+    
+    //配置文件等号之间不要有空格，切记！！！ ！！！
+    spring.thymeleaf.prefix=classpath:/templates/ 前缀路劲  此处默认templates目录下
+    spring.thymeleaf.suffix=.html  后缀名    默认后缀名为.html
+    spring.thymeleaf.mode=HTML5  配置视图模板类型，默认为HTML4？？？？？？
+    spring.thymeleaf.encoding=utf-8 配置编码格式，默认utf-8
+    spring.thymeleaf.servlet.content-type=text/html 响应视图类型默认为text/html
+    //默认是true，开发时最好关闭缓存
+    spring.thymeleaf.cache=false 配置页面缓存，默认为true
+    
+    
+
+
+---
+
+
+
 
 # 2020.7.14 日所学内容
 
